@@ -20,7 +20,7 @@ public class FireStoreHelper {
         if(_initialized) return;
         try {
             // Use a service account
-            InputStream serviceAccount = FireStoreHelper.class.getClassLoader().getResourceAsStream("minxu-travel-app-firebase-adminsdk-to42v-193cd68b19.json");
+            InputStream serviceAccount = FireStoreHelper.class.getClassLoader().getResourceAsStream("minxu-travel-app-firebase-adminsdk-to42v-70e96ce413.json");
             GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(credentials)
