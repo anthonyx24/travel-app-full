@@ -35,7 +35,7 @@ const NewTripScreen = ({navigation}) => {
         .then(() => {
             console.log('Created trip: ' + inputJson);
             // Navigate to home screen or do something else upon success
-            navigation.navigate('TripsScreen');
+            navigation.navigate('TripListScreen');
           })
           .catch(error => {
             console.error('Create trip failed:', error);

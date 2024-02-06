@@ -34,7 +34,10 @@ public class FirestoreTripService {
             // User authentication, HTTP is stateless so just get the UID every time
             String uid = FirebaseAuthHelper.getUidFromToken(idToken);
 
+            DocumentReference docRef =  db.collection("users").document(uid).collection("trips").document();
+
             Map<String, Object> data = new HashMap<>();
+            data.put("tripId", docRef.getId());
             data.put("tripName", trip.getTripName());
 
             String inputDestination = trip.getDestination();
@@ -44,7 +47,7 @@ public class FirestoreTripService {
             data.put("destination", inputDestination);
 
 
-            ApiFuture<DocumentReference> addedDocRef = db.collection("users").document(uid).collection("trips").add(data);
+            ApiFuture<WriteResult> result = docRef.set(data);
 //            WriteResult result = db.collection("users").document(uid).collection("trips").document(trip.getTripName()).set(trip).get();
             System.out.println("Added trip " + trip.getTripName() + "to user " + uid);
         } catch (Exception e) {
@@ -52,17 +55,17 @@ public class FirestoreTripService {
         }
     }
 
-    public Trip getTrip(String idToken, String documentId) {
+    public Trip getTrip(String idToken, String tripId) {
         try {
             String uid = FirebaseAuthHelper.getUidFromToken(idToken);
-            ApiFuture<DocumentSnapshot> future = db.collection("users").document(uid).collection("trips").document(documentId).get();
+            ApiFuture<DocumentSnapshot> future = db.collection("users").document(uid).collection("trips").document(tripId).get();
             DocumentSnapshot document = future.get();
             if (document.exists()){
-                System.out.println("Document data: " + document.getData());
+                System.out.println("Trip data: " + document.getData());
                 return document.toObject(Trip.class);
             }
             else {
-                System.out.println("No such document!");
+                System.out.println("No trip exists with that tripId");
             }
         } catch (Exception e) {
             e.printStackTrace();

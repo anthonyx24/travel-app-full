@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { SafeAreaView, View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import AuthService from '../services/AuthService';
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -13,7 +13,7 @@ const SignUpScreen = ({ navigation }) => {
       .then(() => {
         console.log('User account created & signed in!');
         // Navigate to the home screen or other appropriate screen
-        navigation.navigate('TripsScreen');
+        navigation.navigate('TripListScreen');
       })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use') {
@@ -28,7 +28,7 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -61,7 +61,7 @@ const SignUpScreen = ({ navigation }) => {
           <Text>Sign Up</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   
   );
 };

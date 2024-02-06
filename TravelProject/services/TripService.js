@@ -27,7 +27,31 @@ const createTrip = async (tripData) => {
 const getAllTrips = async () => {
   try{
     const idToken = await auth().currentUser.getIdToken();
-    const response = await fetch('http://localhost:8080/trips/getAll', {
+    const response = await fetch('http://localhost:8080/trips/get/all', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('HTTP error: Status code ' + response.status);
+    }
+
+    const responseData = await response.json();
+    return responseData;
+
+  }catch(error){
+    console.error(error);
+    throw error;
+  }
+}
+
+const getTrip = async (tripId) => {
+  try{
+    const idToken = await auth().currentUser.getIdToken();
+    const response = await fetch(`http://localhost:8080/trips/get/${tripId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -53,5 +77,6 @@ const getAllTrips = async () => {
 export default {
   createTrip,
   getAllTrips,
+  getTrip,
   // Export other auth functions...
 }

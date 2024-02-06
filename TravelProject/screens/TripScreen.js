@@ -1,0 +1,257 @@
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, View, TouchableOpacity, FlatList, Text, StyleSheet, Image, ScrollView, useWindowDimensions } from 'react-native';
+import Animated, { interpolate, useAnimatedRef, useScrollViewOffset, useAnimatedStyle, useAnimatedScrollHandler } from 'react-native-reanimated';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+
+import Icon from 'react-native-vector-icons/AntDesign';
+import TripService from '../services/TripService';
+
+const IMG_HEIGHT = 170;
+
+const OverviewTab = () => (
+    <View style={styles.tripBody}>
+        <Text style={styles.headerText}>Overview</Text>       
+    </View>
+);
+
+const FoodDrinkTab = () => (
+    <View style={styles.tripBody}>
+        <Text style={styles.headerText}>Food & Drink</Text>       
+    </View>
+);
+
+const ActivitiesRoute = () => (
+    <View style={styles.tripBody}>
+        <Text style={styles.headerText}>Activities</Text>       
+    </View>
+);
+
+const SightseeingRoute = () => (
+    <View style={styles.tripBody}>
+        <Text style={styles.headerText}>Sightseeing</Text>       
+    </View>
+);
+
+const MuseumsRoute = () => (
+    <View style={styles.tripBody}>
+        <Text style={styles.headerText}>Museums</Text>       
+    </View>
+);
+
+// const renderScene = SceneMap({
+//     overview: OverviewRoute,
+//     foodDrink: FoodDrinkRoute,
+// });
+
+
+// const CustomTabBar = props => {
+//     return (
+//         <TabBar
+//             {...props}
+//             indicatorStyle={{ backgroundColor: 'black' }}
+//             style={{ backgroundColor: 'white' }}
+//             renderLabel={({ route, focused, color }) => (
+//                 <Text style={[styles.bodyText, {color: 'black'}]}>
+//                     {route.title}
+//                 </Text>
+//             )}
+//         />
+//     );
+// };
+
+const TripScreen = ({navigation, route}) => {
+
+    const tripId = route.params.tripId;
+
+    const [trip, setTrip] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [selectedTab, setSelectedTab] = useState('overview');
+
+    const scrollRef = useAnimatedRef();
+    const scrollOffset = useScrollViewOffset(scrollRef);
+
+    // const [index, setIndex] = useState(0);
+    const tabRoutes = [
+        { key: 'overview', title: 'Overview', component: OverviewTab },
+        { key: 'foodDrink', title: 'Food & Drink', component: FoodDrinkTab },
+    ];
+
+    // const layout = useWindowDimensions();
+
+    const scrollHandler = useAnimatedScrollHandler({
+        onScroll: (event) => {
+          scrollOffset.value = event.contentOffset.y;
+        },
+      });
+
+    const imageAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+                {
+                    // interpolate: map one value to a range of values
+                    translateY: interpolate(
+                        scrollOffset.value,
+                        [-IMG_HEIGHT, 0, IMG_HEIGHT], // input range
+                        [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75], // output range
+                    )
+                },
+                {
+                    scale: interpolate(
+                        scrollOffset.value,
+                        [-IMG_HEIGHT, 0, IMG_HEIGHT],
+                        [2, 1, 1] // scale up to 2x, then back to 1x
+                    )
+                }
+            ]
+        };
+    });
+
+    useEffect(() => {
+        const fetchTrip = async () => {
+            try {
+                setLoading(true);
+                const tripData = await TripService.getTrip(tripId);
+                setTrip(tripData);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error loading the trip: ", error);
+                setLoading(false);
+            }
+        };
+
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchTrip();
+        });
+
+        fetchTrip();
+        return unsubscribe;
+    }, [navigation]);
+
+    const renderTabContent = () => {
+        const TabComponent = tabRoutes.find(route => route.key === selectedTab).component;
+        return TabComponent ? <TabComponent /> : null;
+    }
+
+    const renderTabBar = () => (
+        <View style={styles.tabBar}>
+            {tabRoutes.map(route => (
+                <TouchableOpacity
+                    key={route.key}
+                    onPress={() => setSelectedTab(route.key)}
+                    style={[
+                        styles.tabItem,
+                        selectedTab === route.key && styles.selectedTabItem
+                    ]}
+                >
+                    <Text style={styles.bodyText}>{route.title}</Text>
+                </TouchableOpacity>
+            ))}
+        </View>
+    );
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <Animated.ScrollView ref={scrollRef} onScroll={scrollHandler} scrollEventThrottle={16}>
+                <Animated.Image source={require('../example.png')} style={[styles.tripImage, imageAnimatedStyle]}/>
+                <View style={styles.tripContainer}>
+                    <View style={styles.tripHeader}>
+                        <Text style = {[styles.headerText, {marginBottom: 4}]} >{trip.tripName}</Text>
+                        <Text style={[styles.bodyText, {color: '#717171'}]}>{trip.destination}</Text>
+                    </View>
+                    {renderTabBar()}
+                    {renderTabContent()}
+                    {/* <TabView
+                        style={{height: 1000}}
+                        navigationState={{ index, routes }}
+                        renderScene={renderScene}
+                        onIndexChange={setIndex}
+                        initialLayout={{ width: layout.width }}
+                        renderTabBar={props => <CustomTabBar {...props} />}
+                    /> */}
+                    {/* <ScrollView style={styles.navigationTabs} horizontal={true}>
+                        <TouchableOpacity>
+                            <Text>Overview</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Text>Restaurants</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Text>Activities</Text>
+                        </TouchableOpacity>
+                    </ScrollView> */}
+                    
+                </View>
+            </Animated.ScrollView>
+        </SafeAreaView>
+    );
+}
+
+const styles = StyleSheet.create({
+    tripImage: {
+        width: '100%',
+        height: IMG_HEIGHT,
+        flexShrink: 0,
+        position: 'absolute',
+    },
+
+    container: {
+        flex: 1,
+    },
+
+    tripContainer: {
+        flex: 1,
+        marginTop: IMG_HEIGHT,
+        backgroundColor: 'white',
+    },
+
+    tripHeader: {
+        display: 'flex',
+        padding: 16,
+        flexDirection: 'column',
+        alignItems: 'start',
+        gap: 4,
+    },
+
+    smallText: {
+        fontWeight: '400',
+        fontStyle: 'normal',
+        fontSize: 14,
+    },
+
+    headerText: {
+        color: 'black',
+        fontSize: 20,
+        fontWeight: '700',
+        fontStyle: 'normal',
+    },
+
+    tabBar: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 16,
+        paddingHorizontal: 16,
+        flexShrink: 0,
+    },
+
+    tabItem: {
+        padding: 10,
+        borderBottomWidth: 2,
+        borderColor: 'transparent',
+    },
+
+    selectedTabItem: {
+        padding: 10,
+        borderBottomWidth: 2,
+        borderBottomColor: 'black',
+    },
+
+    tripBody: {
+        display: 'flex',
+        backgroundColor: '#f6f6f6',
+        height: 1000,
+        padding: 16
+    },
+
+});
+
+export default TripScreen;

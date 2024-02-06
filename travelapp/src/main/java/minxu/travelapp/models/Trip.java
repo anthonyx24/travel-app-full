@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Trip {
-//    private String documentId;
+    private String tripId;
     private String tripName;
     private String destination;
 //    private String duration;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';import AuthService from '../services/AuthService';
+import { SafeAreaView, View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';import AuthService from '../services/AuthService';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 const LoginScreen = ({ navigation }) => {
@@ -12,7 +12,7 @@ const LoginScreen = ({ navigation }) => {
       .then(() => {
         console.log('Logged in!');
         // Navigate to home screen or do something else upon success
-        navigation.navigate('TripsScreen');
+        navigation.navigate('TripListScreen');
       })
       .catch(error => {
         console.error('Login failed:', error);
@@ -31,7 +31,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -64,7 +64,7 @@ const LoginScreen = ({ navigation }) => {
           <Text>Login</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   
   );
 };

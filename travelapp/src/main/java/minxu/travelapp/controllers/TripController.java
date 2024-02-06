@@ -24,12 +24,12 @@ public class TripController {
         firestoreTripService.createTrip(idToken, trip);
     }
 
-    @GetMapping("/trips/get")
-    public Trip getTrip(@RequestHeader("Authorization") String idToken, @RequestBody String documentId) {
-        return firestoreTripService.getTrip(idToken, documentId);
+    @GetMapping("/trips/get/{tripId}")
+    public Trip getTrip(@RequestHeader("Authorization") String idToken, @PathVariable String tripId) {
+        return firestoreTripService.getTrip(idToken, tripId);
     }
 
-    @GetMapping("/trips/getAll")
+    @GetMapping("/trips/get/all")
     public List<Trip> getAllTrips(@RequestHeader("Authorization") String idToken) {
         return firestoreTripService.getAllTrips(idToken);
     }

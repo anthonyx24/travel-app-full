@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import TripService from '../services/TripService';
-import { View, TouchableOpacity, FlatList, Text, StyleSheet, Image } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity, FlatList, Text, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 const TripsScreen = ({navigation}) => {
@@ -16,7 +16,7 @@ const TripsScreen = ({navigation}) => {
                 setTrips(tripsData);
                 setLoading(false);
             } catch (error) {
-                console.error(error);
+                console.error("Error loading the trips: ", error);
                 setLoading(false);
             }
         };
@@ -30,7 +30,7 @@ const TripsScreen = ({navigation}) => {
     }, [navigation]);
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.headText}>Trips</Text>
             <TouchableOpacity
@@ -42,19 +42,22 @@ const TripsScreen = ({navigation}) => {
           </View>
           <View style={styles.content}>
             <FlatList data={trips}  showsVerticalScrollIndicator={false} renderItem={({item}) => 
-                <View style={styles.tripContainer}>
+                <TouchableOpacity 
+                  style={styles.tripContainer}
+                  onPress = {() => navigation.navigate('TripScreen', {tripId: item.tripId})}
+                  >
                     <Image source={require('../example.png')} style={styles.tripImage}/>
                     <View style={styles.tripText}>
                         <Text style={styles.tripTitle}>{item.tripName}</Text>
                         <Text style={styles.tripDestination}>{item.destination}</Text>
                     </View>
                     <Icon name="right" size={16} style={styles.tripButton}/>
-                </View>
+                </TouchableOpacity>
                 
             }/>
             
           </View>
-        </View>
+        </SafeAreaView>
       
       );
 }
