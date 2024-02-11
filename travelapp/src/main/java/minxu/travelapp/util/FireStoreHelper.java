@@ -32,7 +32,6 @@ public class FireStoreHelper {
             db = FirestoreClient.getFirestore();
             _initialized = true;
         } catch (Exception e) {
-            e.printStackTrace();
             throw new IllegalStateException("Failed to initialize Firestore", e);
         }
     }

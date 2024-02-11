@@ -3,7 +3,7 @@ import TripService from '../services/TripService';
 import { SafeAreaView, View, TouchableOpacity, FlatList, Text, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-const TripsScreen = ({navigation}) => {
+const TripListScreen = ({navigation}) => {
 
     const [trips, setTrips] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -133,4 +133,4 @@ const styles = StyleSheet.create({
 
   });
 
-export default TripsScreen;
+export default TripListScreen;

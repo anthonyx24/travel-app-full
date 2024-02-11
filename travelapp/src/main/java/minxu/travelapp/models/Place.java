@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Place {
+    private String placeId;
     private String name;
     private String category;
-    private String image_url;
-    private String link;
-    private String address;
+//    private String image_url;
+//    private String link;
+//    private String address;
 }

@@ -20,11 +20,12 @@ Designer: Monica Min
 - Basic adding trips functionality completed
 - Login/Signup functionality completed including error handling
 
+![Alt text](demos/image.png)
+![Alt text](demos/image-1.png)
+![Alt text](demos/image-2.png)
+![Alt text](demos/image-3.png)
+![Alt text](demos/scrolldemo.gif)
 
-![Alt text](image.png)
-![Alt text](image-1.png)
-![Alt text](image-2.png)
-![Alt text](image-3.png)
 
 
 

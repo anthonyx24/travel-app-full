@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, View, TouchableOpacity, FlatList, Text, StyleSheet, Image, ScrollView, useWindowDimensions } from 'react-native';
 import Animated, { interpolate, useAnimatedRef, useScrollViewOffset, useAnimatedStyle, useAnimatedScrollHandler } from 'react-native-reanimated';
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 import Icon from 'react-native-vector-icons/AntDesign';
 import TripService from '../services/TripService';
+import TabBar from '../components/TabBar';
 
 const IMG_HEIGHT = 170;
 
@@ -38,34 +38,12 @@ const MuseumsRoute = () => (
     </View>
 );
 
-// const renderScene = SceneMap({
-//     overview: OverviewRoute,
-//     foodDrink: FoodDrinkRoute,
-// });
-
-
-// const CustomTabBar = props => {
-//     return (
-//         <TabBar
-//             {...props}
-//             indicatorStyle={{ backgroundColor: 'black' }}
-//             style={{ backgroundColor: 'white' }}
-//             renderLabel={({ route, focused, color }) => (
-//                 <Text style={[styles.bodyText, {color: 'black'}]}>
-//                     {route.title}
-//                 </Text>
-//             )}
-//         />
-//     );
-// };
-
 const TripScreen = ({navigation, route}) => {
 
     const tripId = route.params.tripId;
 
     const [trip, setTrip] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [selectedTab, setSelectedTab] = useState('overview');
 
     const scrollRef = useAnimatedRef();
     const scrollOffset = useScrollViewOffset(scrollRef);
@@ -109,6 +87,7 @@ const TripScreen = ({navigation, route}) => {
     useEffect(() => {
         const fetchTrip = async () => {
             try {
+                setTrip([]);
                 setLoading(true);
                 const tripData = await TripService.getTrip(tripId);
                 setTrip(tripData);
@@ -125,29 +104,9 @@ const TripScreen = ({navigation, route}) => {
 
         fetchTrip();
         return unsubscribe;
-    }, [navigation]);
+    }, [navigation, tripId]);
 
-    const renderTabContent = () => {
-        const TabComponent = tabRoutes.find(route => route.key === selectedTab).component;
-        return TabComponent ? <TabComponent /> : null;
-    }
-
-    const renderTabBar = () => (
-        <View style={styles.tabBar}>
-            {tabRoutes.map(route => (
-                <TouchableOpacity
-                    key={route.key}
-                    onPress={() => setSelectedTab(route.key)}
-                    style={[
-                        styles.tabItem,
-                        selectedTab === route.key && styles.selectedTabItem
-                    ]}
-                >
-                    <Text style={styles.bodyText}>{route.title}</Text>
-                </TouchableOpacity>
-            ))}
-        </View>
-    );
+    
 
     return (
         <SafeAreaView style={styles.container}>
@@ -158,27 +117,7 @@ const TripScreen = ({navigation, route}) => {
                         <Text style = {[styles.headerText, {marginBottom: 4}]} >{trip.tripName}</Text>
                         <Text style={[styles.bodyText, {color: '#717171'}]}>{trip.destination}</Text>
                     </View>
-                    {renderTabBar()}
-                    {renderTabContent()}
-                    {/* <TabView
-                        style={{height: 1000}}
-                        navigationState={{ index, routes }}
-                        renderScene={renderScene}
-                        onIndexChange={setIndex}
-                        initialLayout={{ width: layout.width }}
-                        renderTabBar={props => <CustomTabBar {...props} />}
-                    /> */}
-                    {/* <ScrollView style={styles.navigationTabs} horizontal={true}>
-                        <TouchableOpacity>
-                            <Text>Overview</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Text>Restaurants</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Text>Activities</Text>
-                        </TouchableOpacity>
-                    </ScrollView> */}
+                    <TabBar routes={tabRoutes} />
                     
                 </View>
             </Animated.ScrollView>

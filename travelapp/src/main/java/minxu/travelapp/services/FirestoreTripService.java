@@ -2,8 +2,6 @@ package minxu.travelapp.services;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseToken;
 import minxu.travelapp.clients.GooglePlacesClient;
 import minxu.travelapp.models.Trip;
 import minxu.travelapp.util.FireStoreHelper;
@@ -21,11 +19,9 @@ import java.util.Map;
 public class FirestoreTripService {
 
     private final Firestore db;
-//    private final FirebaseAuth firebaseAuth;
 
     public FirestoreTripService() {
         this.db = FireStoreHelper.getFirestore();
-//        this.firebaseAuth = FirebaseAuth.getInstance();
     }
 
     public void createTrip(String idToken, Trip trip) {
@@ -51,7 +47,7 @@ public class FirestoreTripService {
 //            WriteResult result = db.collection("users").document(uid).collection("trips").document(trip.getTripName()).set(trip).get();
             System.out.println("Added trip " + trip.getTripName() + "to user " + uid);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error creating trip: " + e.getMessage());
         }
     }
 
@@ -68,7 +64,7 @@ public class FirestoreTripService {
                 System.out.println("No trip exists with that tripId");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error getting trip: " + e.getMessage());
         }
         return null;
     }
@@ -78,16 +74,26 @@ public class FirestoreTripService {
             String uid = FirebaseAuthHelper.getUidFromToken(idToken);
             ApiFuture<QuerySnapshot> future = db.collection("users").document(uid).collection("trips").get();
             List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-            List<Trip> trips = new ArrayList<Trip>();
+            List<Trip> trips = new ArrayList<>();
             for (QueryDocumentSnapshot document : documents) {
                 System.out.println("Document data: " + document.getData());
                 trips.add(document.toObject(Trip.class));
             }
             return trips;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error getting all trips: " + e.getMessage());
         }
         return null;
+    }
+
+    public void deleteTrip(String idToken, String tripId) {
+        try {
+            String uid = FirebaseAuthHelper.getUidFromToken(idToken);
+            ApiFuture<WriteResult> writeResult = db.collection("users").document(uid).collection("trips").document(tripId).delete();
+            System.out.println("Deleted trip with tripId: " + tripId);
+        } catch (Exception e) {
+            System.out.println("Error deleting trip: " + e.getMessage());
+        }
     }
 
 

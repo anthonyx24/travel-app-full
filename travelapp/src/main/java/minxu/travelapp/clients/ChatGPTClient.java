@@ -84,7 +84,7 @@ public class ChatGPTClient {
             JSONObject jsonResponse = new JSONObject(response.getBody());
             this.threadId = jsonResponse.getString("id");
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error creating thread: " + e.getMessage());
         }
     }
 
@@ -145,7 +145,7 @@ public class ChatGPTClient {
                 Thread.sleep(2000);
                 System.out.println("Checking run status...");
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println("Error getting AI response: " + e.getMessage());
             }
         }
 

@@ -12,7 +12,7 @@ const LoginScreen = ({ navigation }) => {
       .then(() => {
         console.log('Logged in!');
         // Navigate to home screen or do something else upon success
-        navigation.navigate('TripListScreen');
+        navigation.navigate('Tabs', { screen: 'Trips' });
       })
       .catch(error => {
         console.error('Login failed:', error);
@@ -109,8 +109,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignSelf: 'flex-start',
-    padding: 0,
-    marginLeft: -10,
+    paddingHorizontal: 16,
   }
 });
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import TripService from '../services/TripService';
-import { View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
+import { SafeAreaView, View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -35,7 +35,7 @@ const NewTripScreen = ({navigation}) => {
         .then(() => {
             console.log('Created trip: ' + inputJson);
             // Navigate to home screen or do something else upon success
-            navigation.navigate('TripListScreen');
+            navigation.navigate('Trips');
           })
           .catch(error => {
             console.error('Create trip failed:', error);
@@ -57,7 +57,7 @@ const NewTripScreen = ({navigation}) => {
     // };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.headText}>New Trip</Text>
             <TouchableOpacity
@@ -90,7 +90,7 @@ const NewTripScreen = ({navigation}) => {
               <Text>Create Trip</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </SafeAreaView>
       
       );
 
@@ -128,7 +128,8 @@ const NewTripScreen = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
+      marginTop: 20,
+      marginHorizontal: 16,
     },
     header: {
         width: '100%',

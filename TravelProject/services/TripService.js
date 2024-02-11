@@ -3,7 +3,7 @@ import auth from '@react-native-firebase/auth';
 const createTrip = async (tripData) => {
   try{
     const idToken = await auth().currentUser.getIdToken();
-    const response = await fetch('http://localhost:8080/trips/create', {
+    const response = await fetch('http://localhost:8080/trips', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ const createTrip = async (tripData) => {
     });
 
     if (!response.ok) {
-      throw new Error('Something went wrong!');
+      throw new Error('Error creating trip!');
     }
 
     return;
@@ -27,7 +27,7 @@ const createTrip = async (tripData) => {
 const getAllTrips = async () => {
   try{
     const idToken = await auth().currentUser.getIdToken();
-    const response = await fetch('http://localhost:8080/trips/get/all', {
+    const response = await fetch('http://localhost:8080/trips', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ const getAllTrips = async () => {
 const getTrip = async (tripId) => {
   try{
     const idToken = await auth().currentUser.getIdToken();
-    const response = await fetch(`http://localhost:8080/trips/get/${tripId}`, {
+    const response = await fetch(`http://localhost:8080/trips/${tripId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

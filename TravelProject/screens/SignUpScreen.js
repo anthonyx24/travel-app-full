@@ -13,7 +13,7 @@ const SignUpScreen = ({ navigation }) => {
       .then(() => {
         console.log('User account created & signed in!');
         // Navigate to the home screen or other appropriate screen
-        navigation.navigate('TripListScreen');
+        navigation.navigate('Tabs', { screen: 'Trips' });
       })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use') {
