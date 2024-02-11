@@ -20,10 +20,9 @@ Designer: Monica Min
 - Basic adding trips functionality completed
 - Login/Signup functionality completed including error handling
 
-![Alt text](demos/image.png)
-![Alt text](demos/image-1.png)
-![Alt text](demos/image-2.png)
-![Alt text](demos/image-3.png)
+<img src="demos/image-1.png" width="232" height="480"/>
+<img src="demos/image-2.png" width="232" height="480"/>
+<img src="demos/image-3.png" width="232" height="480"/>
 ![Alt text](demos/scrolldemo.gif)
 
 
