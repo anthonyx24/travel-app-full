@@ -35,7 +35,7 @@ const TripListScreen = ({navigation}) => {
             <Text style={styles.headText}>Trips</Text>
             <TouchableOpacity
               style={styles.createTripButton}
-              onPress={() => navigation.navigate('NewTripScreen')}
+              onPress={() => navigation.navigate('Add')}
             >
               <Text>Create Trip</Text>
             </TouchableOpacity>

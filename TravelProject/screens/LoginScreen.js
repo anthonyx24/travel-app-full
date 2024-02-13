@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginBottom: 20,
+    marginLeft: 30,
   },
   authButton: {
     backgroundColor: '#d9d9d9',

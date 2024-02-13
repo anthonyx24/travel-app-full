@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView, View, TouchableOpacity, FlatList, Text, StyleSheet, Image, ScrollView, useWindowDimensions } from 'react-native';
 import Animated, { interpolate, useAnimatedRef, useScrollViewOffset, useAnimatedStyle, useAnimatedScrollHandler } from 'react-native-reanimated';
 
-const TabBar = ({ routes }) => {
+const TabBar = ({ routes, places }) => {
     const [selectedTab, setSelectedTab] = useState(routes[0].key);
 
     const renderTabBar = () => (
@@ -24,7 +24,7 @@ const TabBar = ({ routes }) => {
 
     const renderTabContent = () => {
         const TabComponent = routes.find(route => route.key === selectedTab).component;
-        return TabComponent ? <TabComponent /> : null;
+        return TabComponent ? <TabComponent places={places}/> : null;
     }
 
     return (

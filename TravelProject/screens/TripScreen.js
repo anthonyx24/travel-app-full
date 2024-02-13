@@ -4,13 +4,25 @@ import Animated, { interpolate, useAnimatedRef, useScrollViewOffset, useAnimated
 
 import Icon from 'react-native-vector-icons/AntDesign';
 import TripService from '../services/TripService';
+import PlaceService from '../services/PlaceService';
 import TabBar from '../components/TabBar';
 
 const IMG_HEIGHT = 170;
 
-const OverviewTab = () => (
+const OverviewTab = ({places}) => (
     <View style={styles.tripBody}>
-        <Text style={styles.headerText}>Overview</Text>       
+        <Text style={styles.headerText}>Overview</Text>
+        <FlatList 
+            data={places}
+            keyExtractor={(item) => item.placeId}
+            horizontal={true}
+            renderItem={({item}) => (
+                <View>
+                    <Text style={styles.smallText}>{item.name}</Text>
+                    <Text style={styles.smallText}>{item.category}</Text>
+                </View>
+            )}
+        />
     </View>
 );
 
@@ -43,6 +55,7 @@ const TripScreen = ({navigation, route}) => {
     const tripId = route.params.tripId;
 
     const [trip, setTrip] = useState([]);
+    const [places, setPlaces] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const scrollRef = useAnimatedRef();
@@ -88,9 +101,12 @@ const TripScreen = ({navigation, route}) => {
         const fetchTrip = async () => {
             try {
                 setTrip([]);
+                setPlaces([]);
                 setLoading(true);
                 const tripData = await TripService.getTrip(tripId);
                 setTrip(tripData);
+                const placeData = await PlaceService.getAllPlaces(tripId);
+                setPlaces(placeData);
                 setLoading(false);
             } catch (error) {
                 console.error("Error loading the trip: ", error);
@@ -113,11 +129,19 @@ const TripScreen = ({navigation, route}) => {
             <Animated.ScrollView ref={scrollRef} onScroll={scrollHandler} scrollEventThrottle={16}>
                 <Animated.Image source={require('../example.png')} style={[styles.tripImage, imageAnimatedStyle]}/>
                 <View style={styles.tripContainer}>
-                    <View style={styles.tripHeader}>
-                        <Text style = {[styles.headerText, {marginBottom: 4}]} >{trip.tripName}</Text>
-                        <Text style={[styles.bodyText, {color: '#717171'}]}>{trip.destination}</Text>
+                    <View style={styles.tripHeaderContainer}>
+                        <View style={styles.tripHeader}>
+                            <Text style = {[styles.headerText, {marginBottom: 4}]} >{trip.tripName}</Text>
+                            <Text style={[styles.bodyText, {color: '#717171'}]}>{trip.destination}</Text>
+                        </View>
+                        <TouchableOpacity
+                            style={styles.addPlaceButton}
+                            onPress={() => navigation.navigate('NewPlaceScreen', {tripId: tripId})}
+                        >
+                            <Text>Add Place</Text>
+                        </TouchableOpacity>
                     </View>
-                    <TabBar routes={tabRoutes} />
+                    <TabBar routes={tabRoutes} places={places} />
                     
                 </View>
             </Animated.ScrollView>
@@ -143,9 +167,15 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
 
+    tripHeaderContainer: {
+        padding: 16,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+
     tripHeader: {
         display: 'flex',
-        padding: 16,
         flexDirection: 'column',
         alignItems: 'start',
         gap: 4,
@@ -190,6 +220,16 @@ const styles = StyleSheet.create({
         height: 1000,
         padding: 16
     },
+
+    addPlaceButton: {
+        borderColor: '#000000',
+        borderWidth: 1,
+        borderRadius: 20,
+        padding: 10,
+        flexDirection: 'row'
+        // fontFamily: 'System',
+        // fontSize: 30,
+      },
 
 });
 

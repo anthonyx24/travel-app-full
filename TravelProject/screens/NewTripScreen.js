@@ -34,12 +34,10 @@ const NewTripScreen = ({navigation}) => {
         TripService.createTrip(inputJson)
         .then(() => {
             console.log('Created trip: ' + inputJson);
-            // Navigate to home screen or do something else upon success
             navigation.navigate('Trips');
           })
           .catch(error => {
             console.error('Create trip failed:', error);
-            // Handle errors (show message, etc.)
           });
             
     };
@@ -62,7 +60,7 @@ const NewTripScreen = ({navigation}) => {
             <Text style={styles.headText}>New Trip</Text>
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.navigate('Trips')}
             >
               <Icon name="close" size={30} color="black"/>
             </TouchableOpacity>

@@ -32,8 +32,8 @@ public class FirestorePlaceService {
 
             Map<String, Object> data = new HashMap<>();
             data.put("placeId", docRef.getId());
-            data.put("tripName", place.getName());
-            data.put("destination", place.getCategory());
+            data.put("name", place.getName());
+            data.put("category", place.getCategory());
 
             ApiFuture<WriteResult> result = docRef.set(data);
 
