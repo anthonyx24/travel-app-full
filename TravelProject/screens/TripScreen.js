@@ -44,12 +44,6 @@ const SightseeingRoute = () => (
     </View>
 );
 
-const MuseumsRoute = () => (
-    <View style={styles.tripBody}>
-        <Text style={styles.headerText}>Museums</Text>       
-    </View>
-);
-
 const TripScreen = ({navigation, route}) => {
 
     const tripId = route.params.tripId;
@@ -122,6 +116,17 @@ const TripScreen = ({navigation, route}) => {
         return unsubscribe;
     }, [navigation, tripId]);
 
+    const handleDelete = () => {
+        TripService.deleteTrip(tripId)
+        .then(() => {
+            console.log('Deleted trip: ' + tripId);
+            navigation.navigate('Trips');
+          })
+          .catch(error => {
+            console.error('Delete trip failed:', error);
+          });
+    }
+
     
 
     return (
@@ -139,6 +144,12 @@ const TripScreen = ({navigation, route}) => {
                             onPress={() => navigation.navigate('NewPlaceScreen', {tripId: tripId})}
                         >
                             <Text>Add Place</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                        style={styles.deletePlaceButton}
+                        onPress={handleDelete}>
+                            <Icon name="delete" size={30} color="red"/>
+                            <Text>Remove Trip</Text>
                         </TouchableOpacity>
                     </View>
                     <TabBar routes={tabRoutes} places={places} />

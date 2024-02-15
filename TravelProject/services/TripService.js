@@ -19,7 +19,7 @@ const createTrip = async (tripData) => {
     return;
 
   }catch(error){
-    console.error(error);
+    console.error("Error creating trip:", error);
     throw error;
   }
 };
@@ -43,7 +43,7 @@ const getAllTrips = async () => {
     return responseData;
 
   }catch(error){
-    console.error(error);
+    console.error("Error getting all trips:", error);
     throw error;
   }
 }
@@ -67,6 +67,29 @@ const getTrip = async (tripId) => {
     return responseData;
 
   }catch(error){
+    console.error("Error getting trip:", error);
+    throw error;
+  }
+}
+
+const deleteTrip = async (tripId) => {
+  try{
+    const idToken = await auth().currentUser.getIdToken();
+    const response = await fetch(`http://localhost:8080/trips/${tripId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('HTTP error: Status code ' + response.status);
+    }
+
+    return;
+
+  }catch(error){
     console.error(error);
     throw error;
   }
@@ -78,5 +101,6 @@ export default {
   createTrip,
   getAllTrips,
   getTrip,
+  deleteTrip,
   // Export other auth functions...
 }

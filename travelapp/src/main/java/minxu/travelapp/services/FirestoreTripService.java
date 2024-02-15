@@ -89,10 +89,24 @@ public class FirestoreTripService {
     public void deleteTrip(String idToken, String tripId) {
         try {
             String uid = FirebaseAuthHelper.getUidFromToken(idToken);
+            deletePlacesFromTrip(uid, tripId);
             ApiFuture<WriteResult> writeResult = db.collection("users").document(uid).collection("trips").document(tripId).delete();
             System.out.println("Deleted trip with tripId: " + tripId);
         } catch (Exception e) {
             System.out.println("Error deleting trip: " + e.getMessage());
+        }
+    }
+
+    public void deletePlacesFromTrip(String uid, String tripId) {
+        try {
+            ApiFuture<QuerySnapshot> future = db.collection("users").document(uid).collection("trips").document(tripId).collection("places").get();
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            for (QueryDocumentSnapshot document : documents) {
+                System.out.print("Deleted place with placeId: " + document.getId());
+                document.getReference().delete();
+            }
+        } catch (Exception e) {
+            System.out.println("Error deleting places from trip: " + e.getMessage());
         }
     }
 

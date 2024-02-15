@@ -26,7 +26,6 @@ const NewTripScreen = ({navigation}) => {
             destination,
             // startDate,
             // endDate,
-            // additionalSpecs,
         };
 
         const inputJson = JSON.stringify(input);
