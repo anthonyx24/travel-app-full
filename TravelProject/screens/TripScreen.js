@@ -26,21 +26,20 @@ const OverviewTab = ({places}) => (
     </View>
 );
 
-const FoodDrinkTab = () => (
+const CategoryTab = ({title, places}) => (
     <View style={styles.tripBody}>
-        <Text style={styles.headerText}>Food & Drink</Text>       
-    </View>
-);
-
-const ActivitiesRoute = () => (
-    <View style={styles.tripBody}>
-        <Text style={styles.headerText}>Activities</Text>       
-    </View>
-);
-
-const SightseeingRoute = () => (
-    <View style={styles.tripBody}>
-        <Text style={styles.headerText}>Sightseeing</Text>       
+        <Text style={styles.headerText}>{title}</Text> 
+        <FlatList 
+            data={places}
+            keyExtractor={(item) => item.placeId}
+            horizontal={true}
+            renderItem={({item}) => (
+                <View>
+                    <Text style={styles.smallText}>{item.name}</Text>
+                    <Text style={styles.smallText}>{item.category}</Text>
+                </View>
+            )}
+        />
     </View>
 );
 
@@ -50,16 +49,19 @@ const TripScreen = ({navigation, route}) => {
 
     const [trip, setTrip] = useState([]);
     const [places, setPlaces] = useState([]);
+    // For now, only have 4 categories.
+    const [foodPlaces, setFoodPlaces] = useState([]);
+    const [sightseeingPlaces, setSightseeingPlaces] = useState([]);
+    const [activityPlaces, setActivityPlaces] = useState([]);
+    const [shoppingPlaces, setShoppingPlaces] = useState([]);
+    const [otherPlaces, setOtherPlaces] = useState([]);
+
     const [loading, setLoading] = useState(false);
 
     const scrollRef = useAnimatedRef();
     const scrollOffset = useScrollViewOffset(scrollRef);
 
     // const [index, setIndex] = useState(0);
-    const tabRoutes = [
-        { key: 'overview', title: 'Overview', component: OverviewTab },
-        { key: 'foodDrink', title: 'Food & Drink', component: FoodDrinkTab },
-    ];
 
     // const layout = useWindowDimensions();
 
@@ -95,12 +97,25 @@ const TripScreen = ({navigation, route}) => {
         const fetchTrip = async () => {
             try {
                 setTrip([]);
+
                 setPlaces([]);
+                setFoodPlaces([]);
+                setActivityPlaces([]);
+                setSightseeingPlaces([]);
+                setShoppingPlaces([]);
+                setOtherPlaces([]);
+
                 setLoading(true);
                 const tripData = await TripService.getTrip(tripId);
                 setTrip(tripData);
                 const placeData = await PlaceService.getAllPlaces(tripId);
                 setPlaces(placeData);
+                setFoodPlaces(placeData.filter(place => place.category === 'Food & Drink'));
+                setActivityPlaces(placeData.filter(place => place.category === 'Activity'));
+                setSightseeingPlaces(placeData.filter(place => place.category === 'Sightseeing'));
+                setShoppingPlaces(placeData.filter(place => place.category === 'Shopping'));
+                setOtherPlaces(placeData.filter(place => place.category === 'Other'));
+
                 setLoading(false);
             } catch (error) {
                 console.error("Error loading the trip: ", error);
@@ -115,6 +130,15 @@ const TripScreen = ({navigation, route}) => {
         fetchTrip();
         return unsubscribe;
     }, [navigation, tripId]);
+
+    const tabRoutes = [
+        { key: 'overview', title: 'Overview', component: OverviewTab, props: {places: places} },
+        { key: 'foodDrink', title: 'Food & Drink', component: CategoryTab, props: {title: 'Food & Drink', places: foodPlaces} },
+        { key: 'sightseeing', title: 'Sightseeing', component: CategoryTab, props: {title: 'Sightseeing', places: sightseeingPlaces} },
+        { key: 'activity', title: 'Activity', component: CategoryTab, props: {title: 'Activity', places: activityPlaces} },
+        { key: 'shopping', title: 'Shopping', component: CategoryTab, props: {title: 'Shopping', places: shoppingPlaces} },
+        { key: 'other', title: 'Other', component: CategoryTab, props: {title: 'Other', places: otherPlaces} },
+    ];
 
     const handleDelete = () => {
         TripService.deleteTrip(tripId)
@@ -152,7 +176,7 @@ const TripScreen = ({navigation, route}) => {
                             <Text>Remove Trip</Text>
                         </TouchableOpacity>
                     </View>
-                    <TabBar routes={tabRoutes} places={places} />
+                    <TabBar routes={tabRoutes} />
                     
                 </View>
             </Animated.ScrollView>

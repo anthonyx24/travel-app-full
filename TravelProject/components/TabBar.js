@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView, View, TouchableOpacity, FlatList, Text, StyleSheet, Image, ScrollView, useWindowDimensions } from 'react-native';
 import Animated, { interpolate, useAnimatedRef, useScrollViewOffset, useAnimatedStyle, useAnimatedScrollHandler } from 'react-native-reanimated';
 
-const TabBar = ({ routes, places }) => {
+const TabBar = ({ routes }) => {
     const [selectedTab, setSelectedTab] = useState(routes[0].key);
 
     const renderTabBar = () => (
-        <View style={styles.tabBar}>
+        <Animated.ScrollView 
+            horizontal={true}
+            showsHorizontalScrollIndicator={false} 
+            style={styles.tabBar}
+        >
             {routes.map(route => (
                 <TouchableOpacity
                     key={route.key}
@@ -19,12 +23,14 @@ const TabBar = ({ routes, places }) => {
                     <Text style={styles.smallText}>{route.title}</Text>
                 </TouchableOpacity>
             ))}
-        </View>
+        </Animated.ScrollView>
     );
 
     const renderTabContent = () => {
-        const TabComponent = routes.find(route => route.key === selectedTab).component;
-        return TabComponent ? <TabComponent places={places}/> : null;
+        const selectedRoute = routes.find(route => route.key === selectedTab);
+        const TabComponent = selectedRoute.component;
+        const tabProps = selectedRoute.props || {};
+        return TabComponent ? <TabComponent {...tabProps} /> : null;
     }
 
     return (
