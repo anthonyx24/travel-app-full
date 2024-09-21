@@ -17,8 +17,10 @@ Designer: Monica Min
 - **Itinerary:** After saving places to the trip, the user can then generate the itinerary. The AI will make the itinerary and save it to the user's trip. From there, the user can edit the itinerary to their liking, or generate a new one.
 
 **Status:**
-- Basic adding trips functionality completed
+- Basic adding/removing trips functionality completed
 - Login/Signup functionality completed including error handling
+- Completed functionality for adding places to a trip, select category dropdown
+- Working autocomplete for place search using Google Places API (New)
 
 <img src="demos/image-1.png" width="375" height="667"/>
 <img src="demos/image-2.png" width="375" height="667"/>
