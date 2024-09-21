@@ -1,24 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PlaceService from '../services/PlaceService';
 import { SafeAreaView, View, TextInput, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 
+import CustomDropdown from '../components/CustomDropdown';
+// import PlaceAutocomplete from '../components/PlaceAutocomplete';
+import PlaceAutocomplete from '../components/PlaceAutocomplete';
+
 const NewPlaceScreen = ({navigation, route}) => {
 
-    const [name, setName] = useState('');
+    const [place, setPlace] = useState(null);
     const [category, setCategory] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    // const [apiKey, setApiKey] = useState(null);
 
     const tripId = route.params.tripId;
 
+    const categoryList = [
+      { label: 'Food & Drink', value: 'Food & Drink' },
+      { label: 'Sightseeing', value: 'Sightseeing' },
+      { label: 'Activity', value: 'Activity' },
+      { label: 'Shopping', value: 'Shopping' },
+      { label: 'Other', value: 'Other' }
+    ];
+
+    // useEffect(() => {
+    //   console.log('Fetching API key');
+    //   const fetchApiKey = async () => {
+    //     const key = await AutocompleteServices.getAutocompleteKey();
+    //     setApiKey(key);
+    //   };
+    //   fetchApiKey();
+    // }, []);
+
     const handleCreate = () => {
-        if (name.trim() === '' || category.trim() === '') {
-            setErrorMessage('Please specify place name and category.');
+        if (!place || category.trim() === '') {
+            setErrorMessage('Please specify place and category.');
+            return;
+        }
+        const categoryValues = categoryList.map(item => item.value);
+        if (!categoryValues.includes(category)) {
+            setErrorMessage('Please specify a valid category.');
             return;
         }
         
         const input = {
-            name,
+            place,
             category,
             // startDate,
             // endDate,
@@ -38,6 +65,10 @@ const NewPlaceScreen = ({navigation, route}) => {
             
     };
 
+    const handleCategorySelect = (item) => {
+        setCategory(item.value);
+    }
+
     return (
         <SafeAreaView style={styles.container}>
           <View style={styles.header}>
@@ -50,19 +81,14 @@ const NewPlaceScreen = ({navigation, route}) => {
             </TouchableOpacity>
           </View>
           <View style={styles.content}>
-            <TextInput
-              style={styles.inputField}
-              placeholder="Place Name"
-              value={name}
-              onChangeText={setName}
-              autoCapitalize="none"
-            />
-            <TextInput
-              style={styles.inputField}
-              placeholder="Category"
-              value={category}
-              onChangeText={setCategory}
-              autoCapitalize="none"
+            <PlaceAutocomplete style={{zIndex: 10}} place={place} setPlace={setPlace}/>
+            <CustomDropdown 
+              options={categoryList} 
+              labelField="label"
+              valueField="value"
+              placeholder="Select category"
+              value={category} 
+              handleSelect={handleCategorySelect}
             />
             {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
             <TouchableOpacity 
@@ -76,6 +102,7 @@ const NewPlaceScreen = ({navigation, route}) => {
       
       );
 
+
 };
 
 const styles = StyleSheet.create({
@@ -83,6 +110,7 @@ const styles = StyleSheet.create({
       flex: 1,
       marginTop: 20,
       marginHorizontal: 16,
+      zIndex: 0,
     },
     header: {
         width: '100%',
@@ -97,7 +125,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     content: {
-      justifyContent: 'center',
+      // justifyContent: 'center',
       flex: 1,
     },
     inputField: {
